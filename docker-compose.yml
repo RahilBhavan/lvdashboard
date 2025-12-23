@@ -1,0 +1,18 @@
+services:
+  keeper-bot:
+    build: .
+    volumes:
+      - .:/app
+    environment:
+      - RPC_URL=${RPC_URL}
+      - KEEPER_PK=${KEEPER_PK}
+      - VAULT_ADDRESS=${VAULT_ADDRESS}
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "3000:80"
+    restart: unless-stopped

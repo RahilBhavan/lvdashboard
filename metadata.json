@@ -1,0 +1,5 @@
+{
+  "name": "Liquidity Vector Dashboard",
+  "description": "A hybrid-compute DeFi primitive dashboard for the Liquidity Vector protocol, featuring off-chain GARCH model visualization and on-chain contract repository.",
+  "requestFramePermissions": []
+}
