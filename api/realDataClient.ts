@@ -1,4 +1,4 @@
-import { supabase, ApyHistory, RebalanceEvent } from '../lib/supabase';
+import { supabase, ApyHistory, RebalanceEvent } from '../lib/supabase.ts';
 import { DashboardData } from '../types';
 
 const COINGECKO_API_URL = 'https://api.coingecko.com/api/v3';
