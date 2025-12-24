@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Section } from './types';
+import { FileCode, Server } from 'lucide-react';
 
 // Navigation Components
 import SidebarNav from './components/SidebarNav';
@@ -8,13 +9,13 @@ import MobileBottomNav from './components/MobileBottomNav';
 // Page Components
 import DashboardNew from './components/DashboardNew';
 import QuantEngine from './components/QuantEngine';
-import CodeViewer from './components/CodeViewer';
+// import CodeViewer from './components/CodeViewer';
 import ConnectButton from './components/ConnectButton';
 import VerificationTesting from './components/VerificationTesting';
 import AdminPanel from './components/AdminPanel';
 import StrategyBuilder from './components/StrategyBuilder';
 
-import { CODE_FILES } from './constants';
+// import { CODE_FILES } from './constants'; // Commented out for production build
 
 const AppNew: React.FC = () => {
     const [activeSection, setActiveSection] = useState<Section>(Section.OVERVIEW);
@@ -62,11 +63,10 @@ const AppNew: React.FC = () => {
             case Section.DEVELOPER:
                 if (activeSubItem === 'contracts') {
                     return (
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
-                            <CodeViewer title="contracts/src/CoreVault.sol" code={CODE_FILES.CORE_VAULT} language="solidity" />
-                            <CodeViewer title="contracts/src/adapters/UniswapV3Adapter.sol" code={CODE_FILES.UNISWAP_V3_ADAPTER} language="solidity" />
-                            <CodeViewer title="contracts/src/adapters/AaveV3Adapter.sol" code={CODE_FILES.AAVE_V3_ADAPTER} language="solidity" />
-                            <CodeViewer title="contracts/src/interfaces/IStrategyAdapter.sol" code={CODE_FILES.I_STRATEGY_ADAPTER} language="solidity" />
+                        <div className="p-8 text-center text-slate-400">
+                            <FileCode size={48} className="mx-auto mb-4 opacity-50" />
+                            <p>Contract code viewer is disabled in production build.</p>
+                            <p className="text-sm mt-2">View contracts on GitHub or in local development.</p>
                         </div>
                     );
                 }
@@ -75,33 +75,19 @@ const AppNew: React.FC = () => {
                 }
                 if (activeSubItem === 'infrastructure') {
                     return (
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
-                            <div className="lg:col-span-1">
-                                <div className="mb-4 card p-6 h-[120px]">
-                                    <h3 className="text-xl font-bold text-vector-300 mb-2 flex items-center gap-2">
-                                        Automation
-                                    </h3>
-                                    <p className="text-slate-300 text-sm">
-                                        The Keeper Bot fetches data, runs off-chain models, and executes on-chain rebalances.
-                                    </p>
-                                </div>
-                                <CodeViewer title="scripts/keepers/bot.py" code={CODE_FILES.KEEPER_BOT} language="python" />
-                            </div>
-                            <div className="lg:col-span-1">
-                                <div className="mb-4 card p-6 h-[120px]">
-                                    <h3 className="text-xl font-bold text-vector-300 mb-2 flex items-center gap-2">
-                                        Docker Container
-                                    </h3>
-                                    <p className="text-slate-300 text-sm">
-                                        Standardized container environment for deployment on cloud services or decentralized compute.
-                                    </p>
-                                </div>
-                                <CodeViewer title="Dockerfile" code={CODE_FILES.DOCKERFILE} language="dockerfile" />
-                            </div>
+                        <div className="p-8 text-center text-slate-400">
+                            <Server size={48} className="mx-auto mb-4 opacity-50" />
+                            <p>Infrastructure code viewer is disabled in production build.</p>
+                            <p className="text-sm mt-2">View infrastructure code on GitHub or in local development.</p>
                         </div>
                     );
                 }
-                return <CodeViewer title="contracts/src/CoreVault.sol" code={CODE_FILES.CORE_VAULT} language="solidity" />;
+                return (
+                    <div className="p-8 text-center text-slate-400">
+                        <FileCode size={48} className="mx-auto mb-4 opacity-50" />
+                        <p>Code viewer is disabled in production build.</p>
+                    </div>
+                );
 
             case Section.MANAGE:
                 if (activeSubItem === 'admin-panel') {
