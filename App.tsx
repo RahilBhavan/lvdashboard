@@ -3,12 +3,12 @@ import { LayoutDashboard, FileCode, BrainCircuit, Activity, ArrowRightLeft, Test
 import { Tab } from './types';
 import Dashboard from './components/Dashboard';
 import QuantEngine from './components/QuantEngine';
-import CodeViewer from './components/CodeViewer';
+// import CodeViewer from './components/CodeViewer';
 import ConnectButton from './components/ConnectButton';
 import VerificationTesting from './components/VerificationTesting';
 import AdminPanel from './components/AdminPanel';
 import StrategyBuilder from './components/StrategyBuilder';
-import { CODE_FILES } from './constants';
+// import { CODE_FILES } from './constants'; // Commented out for production build
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Tab>(Tab.DASHBOARD);
@@ -36,12 +36,12 @@ const App: React.FC = () => {
       case Tab.DASHBOARD:
         return <Dashboard />;
       case Tab.CONTRACTS:
+        // Code viewer disabled for production build
         return (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
-            <CodeViewer title="contracts/src/CoreVault.sol" code={CODE_FILES.CORE_VAULT} language="solidity" />
-            <CodeViewer title="contracts/src/adapters/UniswapV3Adapter.sol" code={CODE_FILES.UNISWAP_V3_ADAPTER} language="solidity" />
-            <CodeViewer title="contracts/src/adapters/AaveV3Adapter.sol" code={CODE_FILES.AAVE_V3_ADAPTER} language="solidity" />
-            <CodeViewer title="contracts/src/interfaces/IStrategyAdapter.sol" code={CODE_FILES.I_STRATEGY_ADAPTER} language="solidity" />
+          <div className="p-8 text-center text-slate-400">
+            <FileCode size={48} className="mx-auto mb-4 opacity-50" />
+            <p>Contract code viewer is disabled in production build.</p>
+            <p className="text-sm mt-2">View contracts on GitHub or in local development.</p>
           </div>
         );
       case Tab.MODEL:
@@ -49,34 +49,14 @@ const App: React.FC = () => {
       case Tab.TESTS:
         return <VerificationTesting />;
       case Tab.INFRA:
+        // Infrastructure code viewer disabled for production build
         return (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
-            <div className="lg:col-span-1">
-              <div className="mb-4 bg-slate-800/50 p-6 rounded-xl border border-slate-700 h-[120px]">
-                <h3 className="text-xl font-bold text-vector-300 mb-2 flex items-center gap-2">
-                  <Server size={24} /> Automation
-                </h3>
-                <p className="text-slate-300 text-sm">
-                  The Keeper Bot fetches data, runs off-chain models, and executes on-chain rebalances.
-                </p>
-              </div>
-              <CodeViewer title="scripts/keepers/bot.py" code={CODE_FILES.KEEPER_BOT} language="python" />
-            </div>
-            <div className="lg:col-span-1">
-              <div className="mb-4 bg-slate-800/50 p-6 rounded-xl border border-slate-700 h-[120px]">
-                <h3 className="text-xl font-bold text-vector-300 mb-2 flex items-center gap-2">
-                  <div className="w-6 h-6 rounded bg-blue-500 flex items-center justify-center text-xs text-white font-bold">D</div>
-                  Docker Container
-                </h3>
-                <p className="text-slate-300 text-sm">
-                  Standardized container environment for deployment on cloud services or decentralized compute.
-                </p>
-              </div>
-              <CodeViewer title="Dockerfile" code={CODE_FILES.DOCKERFILE} language="dockerfile" />
-            </div>
+          <div className="p-8 text-center text-slate-400">
+            <Server size={48} className="mx-auto mb-4 opacity-50" />
+            <p>Infrastructure code viewer is disabled in production build.</p>
+            <p className="text-sm mt-2">View infrastructure code on GitHub or in local development.</p>
           </div>
         );
-
 
       case Tab.ADMIN:
         return <AdminPanel />;
