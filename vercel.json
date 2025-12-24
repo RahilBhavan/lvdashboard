@@ -50,7 +50,7 @@
             ]
         },
         {
-            "source": "/(.*)\\.(?:js|css|woff2|woff|ttf|otf|eot)",
+            "source": "/(.*).js",
             "headers": [
                 {
                     "key": "Cache-Control",
@@ -59,11 +59,20 @@
             ]
         },
         {
-            "source": "/(.*)\\.(?:jpg|jpeg|png|gif|svg|webp|ico)",
+            "source": "/(.*).css",
             "headers": [
                 {
                     "key": "Cache-Control",
-                    "value": "public, max-age=86400, must-revalidate"
+                    "value": "public, max-age=31536000, immutable"
+                }
+            ]
+        },
+        {
+            "source": "/(.*).woff2",
+            "headers": [
+                {
+                    "key": "Cache-Control",
+                    "value": "public, max-age=31536000, immutable"
                 }
             ]
         },
