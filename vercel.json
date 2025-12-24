@@ -1,9 +1,5 @@
 {
     "$schema": "https://openapi.vercel.sh/vercel.json",
-    "buildCommand": "npx vite build",
-    "outputDirectory": "dist",
-    "devCommand": "npx vite",
-    "installCommand": "npm install",
     "framework": "vite",
     "regions": [
         "iad1"
