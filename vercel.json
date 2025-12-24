@@ -86,15 +86,6 @@
             ]
         }
     ],
-    "env": {
-        "VITE_VAULT_ADDRESS": "@vault_address",
-        "VITE_SUPABASE_URL": "@supabase_url",
-        "VITE_SUPABASE_ANON_KEY": "@supabase_anon_key",
-        "VITE_PROTOCOL_OWNER": "@protocol_owner",
-        "VITE_CHAIN_ID": "@chain_id",
-        "VITE_RPC_URL": "@rpc_url",
-        "VITE_WALLETCONNECT_PROJECT_ID": "@walletconnect_project_id"
-    },
     "build": {
         "env": {
             "NODE_ENV": "production"
