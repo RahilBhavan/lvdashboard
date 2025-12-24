@@ -1,32 +1,110 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Liquidity Vector Dashboard
 
-# Run and deploy your AI Studio app
+[![Vercel](https://img.shields.io/badge/Deploy-Vercel-black?logo=vercel)](https://vercel.com)
+[![Railway](https://img.shields.io/badge/Deploy-Railway-purple?logo=railway)](https://railway.app)
+[![CI](https://github.com/RahilBhavan/lv_dashboard/actions/workflows/ci.yml/badge.svg)](https://github.com/RahilBhavan/lv_dashboard/actions/workflows/ci.yml)
 
-This contains everything you need to run your app locally.
+A real-time dashboard for monitoring and managing the Liquidity Vector protocol - an automated liquidity management system for Uniswap V3 with ZK-verified rebalancing.
 
-View your app in AI Studio: https://ai.studio/apps/drive/1zPBrB-7ivgqzaxvLpLTPDRx-1Gk6RMjk
+## 🚀 Quick Start
 
-## Run Locally
+### Local Development
 
-**Prerequisites:**  Node.js, Docker
+**Prerequisites:** Node.js 20+, Python 3.10+, Docker (optional)
 
-## Run with Docker
+1. **Clone and install:**
+   ```bash
+   git clone https://github.com/RahilBhavan/lv_dashboard.git
+   cd lv_dashboard
+   npm install
+   ```
 
-1. Set the environment variables in `.env.local` (and `.env` if needed for the backend).
-2. Build and run the services:
-   `docker-compose up --build`
-   
-The frontend will be available at `http://localhost:3000`.
+2. **Configure environment:**
+   ```bash
+   cp .env.development.example .env
+   # Edit .env with your configuration
+   ```
 
-## Run Locally (Manual)
+3. **Run development server:**
+   ```bash
+   npm run dev
+   ```
 
-**Prerequisites:**  Node.js
+4. **Run keeper bot (optional):**
+   ```bash
+   pip install -r requirements.txt
+   python scripts/keepers/bot.py
+   ```
 
+### Docker Deployment
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+```bash
+docker-compose up --build
+```
+
+Frontend available at `http://localhost:3000`
+
+## 📦 Deployment
+
+This project is optimized for automatic deployment:
+
+- **Frontend** → [Vercel](https://vercel.com) (auto-deploys from `main`)
+- **Backend** → [Railway](https://railway.app) (auto-deploys from `main`)
+
+**See [DEPLOYMENT.md](./DEPLOYMENT.md) for complete deployment instructions.**
+
+## 🏗️ Architecture
+
+- **Frontend**: React + TypeScript + Vite
+- **Smart Contracts**: Solidity + Foundry
+- **Keeper Bot**: Python + Web3.py
+- **Models**: GARCH volatility + Trend analysis
+- **Database**: Supabase
+- **Blockchain**: Ethereum (Sepolia testnet)
+
+## 📚 Documentation
+
+- [Deployment Guide](./DEPLOYMENT.md) - Complete deployment instructions
+- [Setup Real Data](./SETUP_REAL_DATA.md) - Integrate live blockchain data
+- [Vercel Deploy](./VERCEL_DEPLOY.md) - Frontend deployment details
+- [Railway Deploy](./RAILWAY_DEPLOY.md) - Backend deployment details
+
+## 🔧 Development
+
+```bash
+# Linting
+npm run lint
+
+# Type checking
+npm run type-check
+
+# Build
+npm run build
+
+# Format code
+npm run format
+
+# Run tests
+npm test                    # Frontend
+python -m pytest           # Python
+forge test                 # Solidity
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests and linting
+5. Submit a pull request
+
+## 📄 License
+
+MIT License - see LICENSE file for details
+
+## 🔗 Links
+
+- [Live Dashboard](https://your-project.vercel.app)
+- [Documentation](./docs)
+- [GitHub Repository](https://github.com/RahilBhavan/lv_dashboard)
+

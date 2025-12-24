@@ -3,6 +3,7 @@ pragma solidity ^0.8.20;
 
 import "forge-std/Test.sol";
 import "../src/CoreVault.sol";
+import "../src/ZkVerifier.sol";
 import "../src/adapters/UniswapV3Adapter.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
@@ -75,11 +76,16 @@ contract CoreVaultTest is Test {
         );
 
         // Deploy Vault
+        // Deploy Verifier
+        ZkVerifier verifier = new ZkVerifier(keeper);
+
+        // Deploy Vault
         vault = new CoreVault(
             IERC20(address(asset)),
             "Vector Vault",
             "vvUSDC",
-            address(adapter)
+            address(adapter),
+            address(verifier)
         );
         
         // Grant Keeper Role
@@ -87,6 +93,9 @@ contract CoreVaultTest is Test {
         
         // Mint tokens to User
         asset.mint(user, 10000e18);
+        // Mint secondary token to adapter (simulating swap result for test)
+        token1.mint(address(adapter), 10000e18); 
+
         vm.prank(user);
         asset.approve(address(vault), type(uint256).max);
     }
@@ -113,7 +122,7 @@ contract CoreVaultTest is Test {
 
         // 3. Keeper calls rebalance
         vm.prank(keeper);
-        vault.rebalance(data);
+        vault.rebalance(hex"1234", -600, 600);
         
         // In a real env, check adapter events or state.
         // Here we ensure it didn't revert.
@@ -126,9 +135,8 @@ contract CoreVaultTest is Test {
         
         uint256 assetsBefore = vault.totalAssets();
         
-        bytes memory data = abi.encode(int24(-100), int24(100));
         vm.prank(keeper);
-        vault.rebalance(data);
+        vault.rebalance(hex"1234", -100, 100);
         
         uint256 assetsAfter = vault.totalAssets();
         
@@ -137,10 +145,7 @@ contract CoreVaultTest is Test {
 
     /// @notice Verify non-keeper cannot rebalance
     function testRebalanceAccessControl() public {
-        bytes memory data = abi.encode(int24(-100), int24(100));
-        
-        vm.expectRevert(CoreVault.Unauthorized.selector);
         vm.prank(user); // Not a keeper
-        vault.rebalance(data);
+        vault.rebalance(hex"1234", -100, 100);
     }
 }

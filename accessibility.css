@@ -1,0 +1,362 @@
+/* ============================================
+   ACCESSIBILITY ENHANCEMENTS
+   ============================================ */
+
+/* Screen Reader Only Class */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+.sr-only-focusable:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: inherit;
+    margin: inherit;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+}
+
+/* Focus Visible Styles (Enhanced) */
+*:focus-visible {
+    outline: 3px solid var(--color-vector-400);
+    outline-offset: 3px;
+    border-radius: var(--border-radius-sm);
+}
+
+/* Skip Link Styles */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--color-vector-500);
+    color: var(--color-slate-950);
+    padding: var(--space-3) var(--space-6);
+    text-decoration: none;
+    font-weight: var(--font-semibold);
+    border-radius: var(--border-radius-md);
+    z-index: 100;
+    transition: top var(--transition-fast);
+}
+
+.skip-link:focus {
+    top: var(--space-4);
+}
+
+/* High Contrast Focus Indicators */
+@media (prefers-contrast: high) {
+    *:focus-visible {
+        outline-width: 4px;
+        outline-offset: 4px;
+    }
+}
+
+/* ============================================
+   ARIA LIVE REGIONS
+   ============================================ */
+
+[aria-live="polite"],
+[aria-live="assertive"] {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+/* ============================================
+   KEYBOARD NAVIGATION ENHANCEMENTS
+   ============================================ */
+
+/* Visible focus for keyboard users */
+.keyboard-focus-visible:focus-visible {
+    outline: 3px solid var(--color-vector-400);
+    outline-offset: 2px;
+}
+
+/* Focus within for containers */
+.focus-within-highlight:focus-within {
+    border-color: var(--color-vector-400);
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+}
+
+/* ============================================
+   SEMANTIC HTML ENHANCEMENTS
+   ============================================ */
+
+/* Ensure semantic elements have proper roles */
+main {
+    display: block;
+}
+
+article,
+aside,
+footer,
+header,
+nav,
+section {
+    display: block;
+}
+
+/* ============================================
+   FORM ACCESSIBILITY
+   ============================================ */
+
+/* Required field indicator */
+.required::after {
+    content: " *";
+    color: var(--color-error);
+    font-weight: var(--font-bold);
+}
+
+/* Error message styling */
+.error-message {
+    color: var(--color-error);
+    font-size: var(--text-sm);
+    margin-top: var(--space-1);
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.error-message::before {
+    content: "⚠";
+    font-size: var(--text-base);
+}
+
+/* Success message styling */
+.success-message {
+    color: var(--color-success);
+    font-size: var(--text-sm);
+    margin-top: var(--space-1);
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.success-message::before {
+    content: "✓";
+    font-size: var(--text-base);
+}
+
+/* Input focus states */
+input:focus,
+textarea:focus,
+select:focus {
+    outline: 2px solid var(--color-vector-400);
+    outline-offset: 2px;
+    border-color: var(--color-vector-400);
+}
+
+input:invalid:not(:placeholder-shown),
+textarea:invalid:not(:placeholder-shown) {
+    border-color: var(--color-error);
+}
+
+input:valid:not(:placeholder-shown),
+textarea:valid:not(:placeholder-shown) {
+    border-color: var(--color-success);
+}
+
+/* ============================================
+   TOOLTIP ACCESSIBILITY
+   ============================================ */
+
+[role="tooltip"] {
+    position: absolute;
+    z-index: var(--z-tooltip);
+    background: var(--color-slate-800);
+    color: white;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--border-radius-md);
+    font-size: var(--text-sm);
+    max-width: 200px;
+    box-shadow: var(--shadow-lg);
+    pointer-events: none;
+}
+
+/* ============================================
+   MODAL/DIALOG ACCESSIBILITY
+   ============================================ */
+
+[role="dialog"],
+[role="alertdialog"] {
+    position: fixed;
+    z-index: var(--z-modal);
+}
+
+[aria-modal="true"] {
+    /* Ensure modal is on top */
+    z-index: var(--z-modal);
+}
+
+/* Modal backdrop */
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 6, 23, 0.8);
+    backdrop-filter: blur(4px);
+    z-index: var(--z-modal-backdrop);
+}
+
+/* ============================================
+   LOADING STATES ACCESSIBILITY
+   ============================================ */
+
+[aria-busy="true"] {
+    cursor: wait;
+    opacity: 0.7;
+}
+
+/* Loading spinner with ARIA */
+.loading-spinner[role="status"] {
+    position: relative;
+}
+
+.loading-spinner[role="status"]::after {
+    content: attr(aria-label);
+    position: absolute;
+    left: -10000px;
+}
+
+/* ============================================
+   DISCLOSURE WIDGETS (Collapsible Sections)
+   ============================================ */
+
+[aria-expanded="false"]+* {
+    display: none;
+}
+
+[aria-expanded="true"]+* {
+    display: block;
+}
+
+/* Disclosure button indicator */
+button[aria-expanded]::after {
+    content: "";
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: var(--space-2);
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 6px solid currentColor;
+    transition: transform var(--transition-base);
+}
+
+button[aria-expanded="true"]::after {
+    transform: rotate(180deg);
+}
+
+/* ============================================
+   LINK ACCESSIBILITY
+   ============================================ */
+
+/* External link indicator */
+a[target="_blank"]::after {
+    content: " ↗";
+    font-size: 0.8em;
+    vertical-align: super;
+}
+
+/* Remove underline but keep on hover/focus */
+a {
+    text-decoration: none;
+    color: var(--color-vector-400);
+    transition: color var(--transition-base);
+}
+
+a:hover,
+a:focus {
+    text-decoration: underline;
+    color: var(--color-vector-300);
+}
+
+/* ============================================
+   TABLE ACCESSIBILITY
+   ============================================ */
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th {
+    text-align: left;
+    font-weight: var(--font-semibold);
+    background: var(--color-slate-800);
+    padding: var(--space-3);
+}
+
+td {
+    padding: var(--space-3);
+    border-top: 1px solid var(--color-slate-800);
+}
+
+/* Zebra striping for better readability */
+tbody tr:nth-child(even) {
+    background: rgba(15, 23, 42, 0.5);
+}
+
+/* ============================================
+   BUTTON STATES
+   ============================================ */
+
+button:disabled,
+button[aria-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* ============================================
+   LANDMARK REGIONS
+   ============================================ */
+
+/* Ensure landmarks are properly identified */
+[role="banner"],
+[role="navigation"],
+[role="main"],
+[role="complementary"],
+[role="contentinfo"] {
+    /* Styling handled by semantic elements */
+}
+
+/* ============================================
+   COLOR CONTRAST HELPERS
+   ============================================ */
+
+/* Ensure text has sufficient contrast */
+.text-contrast-high {
+    color: white;
+}
+
+.text-contrast-medium {
+    color: var(--color-slate-200);
+}
+
+.text-contrast-low {
+    color: var(--color-slate-400);
+}
+
+/* Background contrast helpers */
+.bg-contrast-high {
+    background: var(--color-slate-950);
+}
+
+.bg-contrast-medium {
+    background: var(--color-slate-900);
+}
+
+.bg-contrast-low {
+    background: var(--color-slate-800);
+}

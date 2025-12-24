@@ -1,0 +1,63 @@
+# Vercel Deployment Ignore
+# Files and directories that should not be uploaded to Vercel
+
+# Python files (backend only, not needed for frontend)
+*.py
+*.pyc
+__pycache__/
+requirements.txt
+Procfile
+
+# Backend scripts
+scripts/keepers/
+scripts/axiom/
+scripts/backtest.py
+
+# Solidity contracts (not needed for frontend deployment)
+contracts/
+foundry.toml
+foundry.lock
+lib/forge-std/
+lib/openzeppelin-contracts/
+lib/v3-core/
+lib/v3-periphery/
+lib/axiom-v2-periphery/
+cache/
+broadcast/
+out/
+
+# Tests
+tests/
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# Railway configuration
+railway.json
+.railwayignore
+
+# Development files
+.env
+.env.local
+.env.development
+.env.*.local
+
+# Git
+.git/
+.gitignore
+.gitmodules
+
+# Editor
+.vscode/
+.idea/
+
+# Temporary files
+*.log
+*.tmp
+.DS_Store

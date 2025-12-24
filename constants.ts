@@ -1,14 +1,26 @@
-// CODE_FILES objects have been extracted to individual files in:
-// - contracts/src/interfaces/IStrategyAdapter.sol
-// - contracts/src/adapters/UniswapV3Adapter.sol
-// - contracts/src/adapters/AaveV3Adapter.sol
-// - contracts/src/CoreVault.sol
-// - models/vamer_model.py
-// - models/trend_model.py
-// - contracts/test/CoreVault.t.sol
-// - models/tests/test_vamer.py
-// - scripts/keepers/bot.py
-// - infra/Dockerfile
+import IStrategyAdapter from './contracts/src/interfaces/IStrategyAdapter.sol?raw';
+import UniswapV3Adapter from './contracts/src/adapters/UniswapV3Adapter.sol?raw';
+import AaveV3Adapter from './contracts/src/adapters/AaveV3Adapter.sol?raw';
+import CoreVault from './contracts/src/CoreVault.sol?raw';
+import VamerModel from './models/vamer_model.py?raw';
+import TrendModel from './models/trend_model.py?raw';
+import CoreVaultTest from './contracts/test/CoreVault.t.sol?raw';
+import VamerModelTest from './models/tests/test_vamer.py?raw';
+import KeeperBot from './scripts/keepers/bot.py?raw';
+import Dockerfile from './infra/Dockerfile?raw';
+
+export const CODE_FILES = {
+    I_STRATEGY_ADAPTER: IStrategyAdapter,
+    UNISWAP_V3_ADAPTER: UniswapV3Adapter,
+    AAVE_V3_ADAPTER: AaveV3Adapter,
+    CORE_VAULT: CoreVault,
+    VAMER_MODEL: VamerModel,
+    TREND_MODEL: TrendModel,
+    CORE_VAULT_TEST: CoreVaultTest,
+    VAMER_MODEL_TEST: VamerModelTest,
+    KEEPER_BOT: KeeperBot,
+    DOCKERFILE: Dockerfile
+};
 
 // Mock Data Generators for Visualization
 export const generateChartData = () => {

@@ -1,0 +1,110 @@
+# Liquidity Vector Protocol Architecture
+
+## 1. PROJECT DEFINITION & VALUE PROPOSITION
+
+*   **Definition:** Liquidity Vector is a non-custodial, modular yield optimization primitive that programmatically rebalances liquidity positions across DeFi markets based on real-time statistical volatility and correlation signals to minimize impermanent loss and maximize fee generation.
+
+*   **Primary User Pain Points:**
+    1.  **Impermanent Loss (IL) Erosion:** Passive LPs in volatile markets suffer significantly when asset prices diverge, often negating fee revenue.
+    2.  **Capital Inefficiency:** Static liquidity ranges (e.g., in Uniswap V3) become "dead capital" when price moves out of range, requiring manual, gas-expensive intervention.
+    3.  **Complexity of Active Management:** Most users lack the quantitative infrastructure to calculate optimal hedge ratios or rebalance triggers 24/7.
+
+*   **Core Hypothesis:** By employing **predictive statistical models** (specifically volatility clustering and mean reversion) to dynamically adjust liquidity ranges and hedge ratios, the protocol can generate superior risk-adjusted returns (Sharpe Ratio) compared to passive holding or static LP strategies, even after accounting for rebalancing gas costs.
+
+## 2. ARCHITECTURAL OVERVIEW
+
+### Component A: Data Ingestion & On-Chain/Oracle Layer
+*   **Purpose:** Aggregates raw market data (price, volume, TVL, IV) from multiple chains to feed the off-chain statistical engine.
+*   **Key Technology:** **The Graph (Subgraphs)** for historical on-chain data indexing combined with **Chainlink Data Feeds** for tamper-proof real-time price reference.
+
+### Component B: Statistical Model Engine (Off-Chain Compute)
+*   **Purpose:** The "brain" of the system. Runs complex Python/Rust-based quantitative models that cannot cost-effectively run on EVM. It produces the "Vector"—a set of target parameters (range, weight, leverage).
+*   **Key Technology:** **Brevis** or **Lagrange** (ZK Coprocessor). This allows the off-chain computation of historical volatility and optimal ranges to be proven on-chain without trusting a centralized bot blindly.
+
+### Component C: Execution & Liquidity Allocation Module
+*   **Purpose:** Receives the "Vector" (instructions), verifies the ZK proof or signature, and atomically executes swaps, deposits, or withdrawals to align the portfolio with the model's target.
+*   **Key Technology:** **1inch Aggregator API** for optimal swap execution during rebalancing to minimize slippage.
+
+### Component D: User Position & Risk Management Vaults
+*   **Purpose:** The user-facing contract where assets are deposited. It standardizes the strategy into a tokenized share class.
+*   **Key Technology:** **ERC-4626 (Tokenized Vault Standard)**. This ensures composability, allowing other protocols to build on top of Liquidity Vector vaults easily.
+
+## 3. STATISTICAL MODEL SPECIFICATION
+
+### Model 1: Volatility-Adjusted Mean Reversion (VAMR)
+*   **Type:** Time Series Analysis / Bollinger Band Optimization
+*   **Purpose:** Determines the optimal tick range for Concentrated Liquidity (e.g., Uniswap V3).
+*   **Input Data Required:**
+    *   Hourly OHLCV price data for the pair (7-day window).
+    *   Current Implied Volatility (IV) from Deribit or on-chain option protocols (e.g., Lyra).
+    *   Gas price moving average (to ensure rebalance profitability).
+*   **Exact Output:** `[tickLower, tickUpper]` (Integer values representing the price range for liquidity provision).
+*   **Risk & Mitigation:**
+    *   **Risk:** *Flash Crash/Trend Break.* If price trends aggressively outside the mean-reversion assumption, the model realizes 100% IL.
+    *   **Mitigation:** **Trend Filter Overlay**. If the Moving Average Convergence Divergence (MACD) indicates a strong breakout, the model switches to "Wide Range" or single-sided liquidity mode until volatility stabilizes.
+
+### Model 2: Correlation-Based Pair Selection (CBPS)
+*   **Type:** Multivariate GARCH (DCC-GARCH)
+*   **Purpose:** Dynamically selects which assets to pair in a multi-asset pool (e.g., Balancer) or which pairs to farm to minimize divergence.
+*   **Input Data Required:**
+    *   90-day correlation coefficient matrix of potential assets (ETH, BTC, SOL, USDC).
+    *   Yield (APR) data for each pool.
+*   **Exact Output:** `AssetWeights { tokenA: 40%, tokenB: 40%, tokenC: 20% }`
+*   **Risk & Mitigation:**
+    *   **Risk:** *Correlation Breakdown.* Assets historically correlated (e.g., L1s) decouple during idiosyncratic news events.
+    *   **Mitigation:** **Covariance Guard**. If real-time covariance spikes beyond 2 standard deviations, the model forces a rotation into stablecoin-heavy pairs.
+
+## 4. KEY SMART CONTRACT FUNCTIONS
+
+*   **`rebalanceVector(uint256 vaultId, bytes calldata zkProof, VectorParams calldata newParams)`**
+    *   *Description:* The core external function called to update positions. It verifies the ZK proof confirming that `newParams` were generated by the valid model code against the correct historical data. It then executes the necessary swaps and LP position updates.
+    *   *Triggers:* **Gelato Network** (Automated whenever the "Rebalance Opportunity Score" > Gas Cost threshold).
+
+*   **`calculateOptimalAllocation(address user)`**
+    *   *Description:* A View function that returns the theoretical current value of a user's share if they were to withdraw immediately, factoring in pending fees and un-compound rewards. Used for frontend display.
+    *   *Visibility:* **Public View**.
+
+*   **`harvestAndCompound()`**
+    *   *Description:* Claims trading fees and farming rewards (e.g., CRV, CVX), swaps them for the vault's underlying principal assets, and redeposits them to compound yield.
+    *   *Access Control:* **Permissionless** (incentivized by a small bounty paid to the caller).
+
+*   **`updateModelParameters(uint256 vaultId, bytes calldata governanceData)`**
+    *   *Description:* Allows the DAO to tweak high-level risk constraints (e.g., max leverage, allowed tokens) without upgrading the entire contract.
+    *   *Access Control:* **TimelockController** (DAO only).
+
+## 5. INTEGRATION PATH (DEFI LEGO)
+
+*   **Protocol 1: Uniswap V3 (Concentrated Liquidity)**
+    *   **Integration:** The protocol mints/burns NFTs via the `NonfungiblePositionManager`. The VAMR model (Model 1) dictates the `tickLower` and `tickUpper`.
+    *   **Reason:** Highest capital efficiency for the Mean Reversion strategy.
+
+*   **Protocol 2: Aave V3 (Lending/Borrowing)**
+    *   **Integration:** Used for **Delta Neutrality**. If the model predicts a downtrend, the Vault deposits USDC collateral into Aave and borrows ETH to provide LP. This neutralizes the ETH exposure in the LP position.
+    *   **Reason:** Allows "Liquidity Vector" to be profitable in bear markets by hedging inventory risk.
+
+*   **Protocol 3: Gearbox Protocol (Composable Leverage)**
+    *   **Integration:** Liquidity Vector acts as a specialized Strategy Adapter (Credit Account manager) to apply leverage to the statistical strategies.
+    *   **Reason:** Amplifies the small edge gained by statistical arbitrage (StatArb) into meaningful APY.
+
+## 6. RISK ASSESSMENT MATRIX
+
+| Risk Category | Likelihood (1-5) | Impact (1-5) | Mitigation Strategy |
+| :--- | :---: | :---: | :--- |
+| **Smart Contract Bug** | 2 | 5 | Formal verification of the core Vault logic; implementation of ERC-4626 standard; staggered deposit limits (Guarded Launch). |
+| **Oracle Manipulation** | 2 | 4 | Use of Chainlink weighted average prices (TWAP) checking against the Spot DEX price. If deviation > 2%, rebalance reverts. |
+| **Model Overfitting** | 3 | 3 | Out-of-sample backtesting required before parameter updates; live "Shadow Mode" running alongside production to validate signals. |
+| **Depeg Event (Stablecoins)** | 1 | 5 | Hardcoded Circuit Breaker: If stablecoin price drops < $0.98, protocol halts all stable-pair rebalancing and pauses deposits. |
+
+## 7. SUCCESS METRICS & KPIs
+
+1.  **Impermanent Loss Reduction Ratio (ILRR):**
+    *   *Metric:* `(Hold Value - Strategy Value) / Hold Value` compared to a standard Uniswap V3 wide-range position.
+    *   *Goal:* > 40% reduction in IL compared to a naive full-range LP.
+
+2.  **Net APY over ETH (Alpha):**
+    *   *Metric:* Annualized return of the Vault minus the annualized return of simply holding the non-stable asset (e.g., ETH).
+    *   *Goal:* Positive Alpha > 5% (indicating the strategy beats "HODLing").
+
+3.  **Gas-Adjusted Profitability:**
+    *   *Metric:* `Total Fees Earned - (Total Gas Spent on Rebalancing + Swap Slippage)`.
+    *   *Goal:* Must be positive on a monthly basis. If negative, the rebalancing frequency parameters are too aggressive.

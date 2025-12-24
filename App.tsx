@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { LayoutDashboard, FileCode, BrainCircuit, Activity, ArrowRightLeft, TestTube2, Server } from 'lucide-react';
+import { LayoutDashboard, FileCode, BrainCircuit, Activity, ArrowRightLeft, TestTube2, Server, ShieldAlert } from 'lucide-react';
 import { Tab } from './types';
 import Dashboard from './components/Dashboard';
 import QuantEngine from './components/QuantEngine';
 import CodeViewer from './components/CodeViewer';
 import ConnectButton from './components/ConnectButton';
 import VerificationTesting from './components/VerificationTesting';
+import AdminPanel from './components/AdminPanel';
+import StrategyBuilder from './components/StrategyBuilder';
 import { CODE_FILES } from './constants';
 
 const App: React.FC = () => {
@@ -75,6 +77,12 @@ const App: React.FC = () => {
           </div>
         );
 
+
+      case Tab.ADMIN:
+        return <AdminPanel />;
+      case Tab.STRATEGY:
+        return <StrategyBuilder />;
+
       default:
         return <Dashboard />;
     }
@@ -113,6 +121,12 @@ const App: React.FC = () => {
             label="Quant Model"
           />
           <NavButton
+            active={activeTab === Tab.STRATEGY}
+            onClick={() => setActiveTab(Tab.STRATEGY)}
+            icon={<BrainCircuit size={20} />}
+            label="Strategy Builder"
+          />
+          <NavButton
             active={activeTab === Tab.TESTS}
             onClick={() => setActiveTab(Tab.TESTS)}
             icon={<TestTube2 size={20} />}
@@ -123,6 +137,12 @@ const App: React.FC = () => {
             onClick={() => setActiveTab(Tab.INFRA)}
             icon={<Server size={20} />}
             label="Infrastructure"
+          />
+          <NavButton
+            active={activeTab === Tab.ADMIN}
+            onClick={() => setActiveTab(Tab.ADMIN)}
+            icon={<ShieldAlert size={20} />}
+            label="Admin Panel"
           />
 
         </nav>
@@ -148,8 +168,10 @@ const App: React.FC = () => {
             {activeTab === Tab.DASHBOARD && 'Protocol Overview'}
             {activeTab === Tab.CONTRACTS && 'Contract Repository'}
             {activeTab === Tab.MODEL && 'Quantitative Engine'}
+            {activeTab === Tab.STRATEGY && 'Strategy Builder'}
             {activeTab === Tab.TESTS && 'Verification & Testing'}
             {activeTab === Tab.INFRA && 'Automation Infrastructure'}
+            {activeTab === Tab.ADMIN && 'Protocol Administration'}
 
           </h1>
           <div className="flex items-center gap-4">

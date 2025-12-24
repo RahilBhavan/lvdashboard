@@ -1,0 +1,72 @@
+# Railway Deployment Ignore
+# Files and directories that should not be uploaded to Railway
+
+# Frontend files (not needed for backend deployment)
+*.tsx
+*.jsx
+*.html
+*.css
+index.tsx
+App.tsx
+AppNew.tsx
+components/
+hooks/
+vite.config.ts
+vite-env.d.ts
+tsconfig.json
+eslint.config.js
+.prettierrc
+
+# Frontend dependencies
+node_modules/
+package.json
+package-lock.json
+
+# Solidity contracts (already deployed, not needed at runtime)
+contracts/
+foundry.toml
+foundry.lock
+lib/
+cache/
+broadcast/
+out/
+
+# Tests
+tests/
+*.test.py
+*.spec.py
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# Vercel configuration
+vercel.json
+.vercelignore
+
+# Development files
+.env
+.env.local
+.env.development
+.env.*.local
+
+# Git
+.git/
+.gitignore
+.gitmodules
+
+# Editor
+.vscode/
+.idea/
+
+# Build artifacts
+dist/
+build/
+
+# Temporary files
+*.log
+*.tmp
+.DS_Store
+__pycache__/
+*.pyc

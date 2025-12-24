@@ -1,0 +1,478 @@
+/* ============================================
+   LIQUIDITY VECTOR - ANIMATIONS & TRANSITIONS
+   ============================================ */
+
+/* ============================================
+   KEYFRAME ANIMATIONS
+   ============================================ */
+
+/* Fade In */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Fade Out */
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+/* Slide In from Bottom */
+@keyframes slideInBottom {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Slide In from Top */
+@keyframes slideInTop {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Slide In from Left */
+@keyframes slideInLeft {
+    from {
+        transform: translateX(-20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Slide In from Right */
+@keyframes slideInRight {
+    from {
+        transform: translateX(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Scale In */
+@keyframes scaleIn {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Pulse */
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Ping (for status indicators) */
+@keyframes ping {
+
+    75%,
+    100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+
+/* Spin */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Bounce */
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(-25%);
+        animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+    }
+
+    50% {
+        transform: translateY(0);
+        animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+    }
+}
+
+/* Shimmer (for loading skeletons) */
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+/* Number Counter (for metric changes) */
+@keyframes numberHighlight {
+    0% {
+        background-color: rgba(34, 197, 94, 0.3);
+    }
+
+    100% {
+        background-color: transparent;
+    }
+}
+
+/* Glow Pulse */
+@keyframes glowPulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 15px rgba(34, 197, 94, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 30px rgba(34, 197, 94, 0.6);
+    }
+}
+
+/* ============================================
+   ANIMATION UTILITY CLASSES
+   ============================================ */
+
+.animate-fade-in {
+    animation: fadeIn 300ms ease-out;
+}
+
+.animate-fade-out {
+    animation: fadeOut 300ms ease-out;
+}
+
+.animate-slide-in-bottom {
+    animation: slideInBottom 400ms ease-out;
+}
+
+.animate-slide-in-top {
+    animation: slideInTop 400ms ease-out;
+}
+
+.animate-slide-in-left {
+    animation: slideInLeft 400ms ease-out;
+}
+
+.animate-slide-in-right {
+    animation: slideInRight 400ms ease-out;
+}
+
+.animate-scale-in {
+    animation: scaleIn 300ms ease-out;
+}
+
+.animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-ping {
+    animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+.animate-bounce {
+    animation: bounce 1s infinite;
+}
+
+.animate-shimmer {
+    background: linear-gradient(90deg,
+            rgba(15, 23, 42, 0.8) 0%,
+            rgba(51, 65, 85, 0.8) 50%,
+            rgba(15, 23, 42, 0.8) 100%);
+    background-size: 1000px 100%;
+    animation: shimmer 2s infinite;
+}
+
+.animate-glow-pulse {
+    animation: glowPulse 2s ease-in-out infinite;
+}
+
+/* ============================================
+   LOADING STATES
+   ============================================ */
+
+/* Skeleton Loader */
+.skeleton {
+    background: linear-gradient(90deg,
+            var(--color-slate-800) 0%,
+            var(--color-slate-700) 50%,
+            var(--color-slate-800) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: var(--border-radius-md);
+}
+
+.skeleton-text {
+    height: 1rem;
+    margin-bottom: var(--space-2);
+}
+
+.skeleton-heading {
+    height: 2rem;
+    width: 60%;
+    margin-bottom: var(--space-4);
+}
+
+.skeleton-card {
+    height: 200px;
+    width: 100%;
+}
+
+/* Spinner */
+.spinner {
+    display: inline-block;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 3px solid var(--color-slate-700);
+    border-top-color: var(--color-vector-400);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+.spinner-lg {
+    width: 3rem;
+    height: 3rem;
+    border-width: 4px;
+}
+
+/* Dots Loader */
+.dots-loader {
+    display: inline-flex;
+    gap: var(--space-2);
+}
+
+.dots-loader span {
+    width: 8px;
+    height: 8px;
+    background-color: var(--color-vector-400);
+    border-radius: 50%;
+    animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.dots-loader span:nth-child(1) {
+    animation-delay: -0.32s;
+}
+
+.dots-loader span:nth-child(2) {
+    animation-delay: -0.16s;
+}
+
+/* ============================================
+   TRANSITION UTILITIES
+   ============================================ */
+
+.transition-all {
+    transition: all var(--transition-base);
+}
+
+.transition-colors {
+    transition: color var(--transition-base),
+        background-color var(--transition-base),
+        border-color var(--transition-base);
+}
+
+.transition-transform {
+    transition: transform var(--transition-base);
+}
+
+.transition-opacity {
+    transition: opacity var(--transition-base);
+}
+
+.transition-fast {
+    transition-duration: var(--transition-fast);
+}
+
+.transition-slow {
+    transition-duration: var(--transition-slow);
+}
+
+/* ============================================
+   HOVER & INTERACTION EFFECTS
+   ============================================ */
+
+/* Lift on Hover */
+.hover-lift {
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+}
+
+/* Glow on Hover */
+.hover-glow {
+    transition: box-shadow var(--transition-base);
+}
+
+.hover-glow:hover {
+    box-shadow: var(--shadow-glow);
+}
+
+/* Scale on Hover */
+.hover-scale {
+    transition: transform var(--transition-base);
+}
+
+.hover-scale:hover {
+    transform: scale(1.05);
+}
+
+/* Press Effect */
+.active-press:active {
+    transform: scale(0.95);
+}
+
+/* ============================================
+   NUMBER COUNTER ANIMATION
+   ============================================ */
+
+.number-change {
+    animation: numberHighlight 1s ease-out;
+}
+
+/* For positive changes */
+.number-change-positive {
+    color: var(--color-success);
+    animation: numberHighlight 1s ease-out;
+}
+
+/* For negative changes */
+.number-change-negative {
+    color: var(--color-error);
+    animation: numberHighlight 1s ease-out;
+}
+
+/* ============================================
+   PAGE TRANSITION ANIMATIONS
+   ============================================ */
+
+.page-enter {
+    animation: fadeIn 300ms ease-out, slideInBottom 300ms ease-out;
+}
+
+.page-exit {
+    animation: fadeOut 300ms ease-out;
+}
+
+/* ============================================
+   MODAL ANIMATIONS
+   ============================================ */
+
+.modal-backdrop-enter {
+    animation: fadeIn 200ms ease-out;
+}
+
+.modal-backdrop-exit {
+    animation: fadeOut 200ms ease-out;
+}
+
+.modal-enter {
+    animation: scaleIn 300ms ease-out;
+}
+
+.modal-exit {
+    animation: fadeOut 200ms ease-out;
+}
+
+/* ============================================
+   TOAST/NOTIFICATION ANIMATIONS
+   ============================================ */
+
+.toast-enter {
+    animation: slideInRight 300ms ease-out;
+}
+
+.toast-exit {
+    animation: slideInRight 300ms ease-out reverse;
+}
+
+/* ============================================
+   CHART ANIMATIONS
+   ============================================ */
+
+.chart-line-draw {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: drawLine 1.5s ease-out forwards;
+}
+
+@keyframes drawLine {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+/* ============================================
+   ACCESSIBILITY - REDUCED MOTION
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .animate-ping,
+    .animate-pulse,
+    .animate-bounce,
+    .animate-spin {
+        animation: none !important;
+    }
+}

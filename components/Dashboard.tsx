@@ -3,14 +3,26 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { useDashboardData } from '../hooks/useDashboardData';
 import RiskExplainer from './RiskExplainer';
 import SimulationModal from './SimulationModal';
+import DepositModal from './DepositModal';
 import { ToastContainer, ToastMessage } from './Toast';
-import { TrendingUp, ShieldCheck, Zap, Lock } from 'lucide-react';
+import { TrendingUp, ShieldCheck, Zap, Lock, Wallet } from 'lucide-react';
+import { useAccount, useConnect } from 'wagmi';
+import { injected } from 'wagmi/connectors';
+import HodlChart from './HodlChart';
+import StanceIndicator from './StanceIndicator';
 
 const Dashboard: React.FC = () => {
-    const { data: dashboardData, isLoading, refetch } = useDashboardData();
+    const { data: dashboardData, isLoading, refetch, userShareBalance, vaultAddress } = useDashboardData();
     const [, _setSimulationStep] = useState(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isDepositOpen, setIsDepositOpen] = useState(false);
     const [toasts, setToasts] = useState<ToastMessage[]>([]);
+
+    // Toggle for Charts
+    const [activeChart, setActiveChart] = useState<'GARCH' | 'HODL'>('GARCH');
+
+    const { isConnected } = useAccount();
+    const { connect } = useConnect();
 
     const addToast = (type: 'success' | 'error' | 'info', title: string, message: string) => {
         const id = Math.random().toString(36).substr(2, 9);
@@ -48,6 +60,38 @@ const Dashboard: React.FC = () => {
 
     return (
         <div className="space-y-6">
+            {/* Header / Wallet Connection */}
+            <div className="flex justify-between items-center bg-slate-900 border border-slate-800 p-4 rounded-xl">
+                <div className="flex items-center gap-4">
+                    <div className="p-2 bg-vector-500/10 rounded-lg">
+                        <Wallet className="text-vector-400" />
+                    </div>
+                    <div>
+                        <h3 className="text-white font-bold">Your Position</h3>
+                        <p className="text-sm text-slate-400">
+                            {isConnected ? `${Number(userShareBalance).toFixed(4)} Shares` : 'Connect Wallet to view'}
+                        </p>
+                    </div>
+                </div>
+                <div>
+                    {!isConnected ? (
+                        <button
+                            onClick={() => connect({ connector: injected() })}
+                            className="px-6 py-2 bg-vector-500 hover:bg-vector-400 text-slate-900 font-bold rounded-lg transition-colors"
+                        >
+                            Connect Wallet
+                        </button>
+                    ) : (
+                        <button
+                            onClick={() => setIsDepositOpen(true)}
+                            className="px-6 py-2 bg-vector-500 hover:bg-vector-400 text-slate-900 font-bold rounded-lg transition-colors"
+                        >
+                            Deposit
+                        </button>
+                    )}
+                </div>
+            </div>
+
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <StatCard
@@ -80,9 +124,19 @@ const Dashboard: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl relative overflow-hidden">
                     <div className="flex items-center justify-between mb-6">
-                        <div>
-                            <h2 className="text-lg font-bold text-white">GARCH(1,1) Volatility Bands</h2>
-                            <p className="text-sm text-slate-400">Visualizing 95% Confidence Interval vs. Real-time Price</p>
+                        <div className="flex gap-4">
+                            <button
+                                onClick={() => setActiveChart('GARCH')}
+                                className={`text-sm font-bold pb-2 border-b-2 transition-colors ${activeChart === 'GARCH' ? 'text-white border-vector-500' : 'text-slate-500 border-transparent hover:text-slate-300'}`}
+                            >
+                                GARCH Volatility
+                            </button>
+                            <button
+                                onClick={() => setActiveChart('HODL')}
+                                className={`text-sm font-bold pb-2 border-b-2 transition-colors ${activeChart === 'HODL' ? 'text-white border-vector-500' : 'text-slate-500 border-transparent hover:text-slate-300'}`}
+                            >
+                                The HODL Line
+                            </button>
                         </div>
                         <button
                             onClick={handleSimulate}
@@ -93,65 +147,72 @@ const Dashboard: React.FC = () => {
                     </div>
 
                     <div className="h-[400px] w-full">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart data={chartData}>
-                                <defs>
-                                    <linearGradient id="colorBand" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#22c55e" stopOpacity={0.1} />
-                                        <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
-                                    </linearGradient>
-                                </defs>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                                <XAxis dataKey="day" stroke="#475569" tickFormatter={(v) => `T+${v}`} />
-                                <YAxis domain={['auto', 'auto']} stroke="#475569" />
-                                <Tooltip
-                                    contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', color: '#f8fafc' }}
-                                    itemStyle={{ color: '#cbd5e1' }}
-                                />
-                                <Area
-                                    type="monotone"
-                                    dataKey="upper"
-                                    stroke="transparent"
-                                    fill="#22c55e"
-                                    fillOpacity={0.05}
-                                    stackId="1"
-                                />
-                                <Area type="monotone" dataKey="price" stroke="#22c55e" strokeWidth={2} fill="url(#colorBand)" />
-                                <Area type="monotone" dataKey="upper" stroke="#86efac" strokeDasharray="5 5" fill="transparent" />
-                                <Area type="monotone" dataKey="lower" stroke="#86efac" strokeDasharray="5 5" fill="transparent" />
+                        {activeChart === 'GARCH' ? (
+                            <ResponsiveContainer width="100%" height="100%">
+                                <AreaChart data={chartData}>
+                                    <defs>
+                                        <linearGradient id="colorBand" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#22c55e" stopOpacity={0.1} />
+                                            <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
+                                        </linearGradient>
+                                    </defs>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                                    <XAxis dataKey="day" stroke="#475569" tickFormatter={(v) => `T+${v}`} />
+                                    <YAxis domain={['auto', 'auto']} stroke="#475569" />
+                                    <Tooltip
+                                        contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', color: '#f8fafc' }}
+                                        itemStyle={{ color: '#cbd5e1' }}
+                                    />
+                                    <Area
+                                        type="monotone"
+                                        dataKey="upper"
+                                        stroke="transparent"
+                                        fill="#22c55e"
+                                        fillOpacity={0.05}
+                                        stackId="1"
+                                    />
+                                    <Area type="monotone" dataKey="price" stroke="#22c55e" strokeWidth={2} fill="url(#colorBand)" />
+                                    <Area type="monotone" dataKey="upper" stroke="#86efac" strokeDasharray="5 5" fill="transparent" />
+                                    <Area type="monotone" dataKey="lower" stroke="#86efac" strokeDasharray="5 5" fill="transparent" />
 
-                                <ReferenceLine y={currentPrice} stroke="#ef4444" strokeDasharray="3 3" label={{ position: 'right', value: 'Current', fill: '#ef4444', fontSize: 12 }} />
-                            </AreaChart>
-                        </ResponsiveContainer>
+                                    <ReferenceLine y={currentPrice} stroke="#ef4444" strokeDasharray="3 3" label={{ position: 'right', value: 'Current', fill: '#ef4444', fontSize: 12 }} />
+                                </AreaChart>
+                            </ResponsiveContainer>
+                        ) : (
+                            <HodlChart />
+                        )}
                     </div>
                 </div>
 
-                {/* Side Panel: Vector Info */}
-                <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 flex flex-col gap-4">
-                    <h3 className="text-lg font-bold text-white mb-2">Vector Parameters</h3>
+                {/* Side Panel: Vector Info & Stance */}
+                <div className="flex flex-col gap-6">
+                    <StanceIndicator stance={dashboardData.stance.stance} score={dashboardData.stance.score} />
 
-                    <div className="space-y-4">
-                        <InfoRow label="Model Status" value="Online" valueColor="text-vector-400" />
-                        <InfoRow label="Last Update" value={metrics.lastUpdate} />
-                        <InfoRow label="Next Rebalance" value={metrics.nextRebalance} />
-                        <div className="h-px bg-slate-800 my-2" />
-                        <InfoRow label="Predicted Vol (σ)" value={`${metrics.volatility.toFixed(2)}%`} />
-                        <InfoRow label="Skew" value={metrics.skew.toFixed(2)} />
-                        <InfoRow label="Kurtosis" value={metrics.kurtosis.toFixed(2)} />
-                    </div>
+                    <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 flex flex-col gap-4 flex-1">
+                        <h3 className="text-lg font-bold text-white mb-2">Vector Parameters</h3>
 
-                    <div className="mt-auto p-4 bg-slate-800/50 rounded-lg border border-slate-700">
-                        <h4 className="text-sm font-semibold text-slate-300 mb-2">Simulation Log</h4>
-                        <div className="font-mono text-xs text-slate-500 space-y-1">
-                            <p>{'>'} Fetching Uniswap pool data...</p>
-                            <p>{'>'} Calculating Log Returns...</p>
-                            <p>{'>'} Fitting GARCH(1,1)...</p>
-                            <p className="text-vector-400">{`> Vector Generated: [${stats.range.tickLower}, ${stats.range.tickUpper}]`}</p>
+                        <div className="space-y-4">
+                            <InfoRow label="Model Status" value="Online" valueColor="text-vector-400" />
+                            <InfoRow label="Last Update" value={metrics.lastUpdate} />
+                            <InfoRow label="Next Rebalance" value={metrics.nextRebalance} />
+                            <div className="h-px bg-slate-800 my-2" />
+                            <InfoRow label="Predicted Vol (σ)" value={`${metrics.volatility.toFixed(2)}%`} />
+                            <InfoRow label="Skew" value={metrics.skew.toFixed(2)} />
+                            <InfoRow label="Kurtosis" value={metrics.kurtosis.toFixed(2)} />
+                        </div>
+
+                        <div className="mt-auto p-4 bg-slate-800/50 rounded-lg border border-slate-700">
+                            <h4 className="text-sm font-semibold text-slate-300 mb-2">Simulation Log</h4>
+                            <div className="font-mono text-xs text-slate-500 space-y-1">
+                                <p>{'>'} Fetching Uniswap pool data...</p>
+                                <p>{'>'} Calculating Log Returns...</p>
+                                <p>{'>'} Fitting GARCH(1,1)...</p>
+                                <p className="text-vector-400">{`> Vector Generated: [${stats.range.tickLower}, ${stats.range.tickUpper}]`}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-
 
             {/* Risk Engine Analysis */}
             <div className="col-span-1 lg:col-span-3">
@@ -164,8 +225,14 @@ const Dashboard: React.FC = () => {
                 onConfirm={executeRebalance}
             />
 
+            <DepositModal
+                isOpen={isDepositOpen}
+                onClose={() => setIsDepositOpen(false)}
+                vaultAddress={vaultAddress as `0x${string}`}
+            />
+
             <ToastContainer toasts={toasts} removeToast={removeToast} />
-        </div>
+        </div >
     );
 };
 
