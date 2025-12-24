@@ -1,3 +1,8 @@
+// NOTE: These imports are commented out for production builds
+// They reference backend files (Solidity, Python) that are excluded from Vercel deployment
+// Uncomment for local development if you need to display code in the UI
+
+/*
 import IStrategyAdapter from './contracts/src/interfaces/IStrategyAdapter.sol?raw';
 import UniswapV3Adapter from './contracts/src/adapters/UniswapV3Adapter.sol?raw';
 import AaveV3Adapter from './contracts/src/adapters/AaveV3Adapter.sol?raw';
@@ -21,6 +26,7 @@ export const CODE_FILES = {
     KEEPER_BOT: KeeperBot,
     DOCKERFILE: Dockerfile
 };
+*/
 
 // Mock Data Generators for Visualization
 export const generateChartData = () => {
