@@ -204,7 +204,13 @@ export const fetchDashboardData = async (): Promise<DashboardData> => {
                 lastUpdate,
                 nextRebalance: '~4 hrs'
             },
-            chartData
+            chartData,
+            stance: {
+                stance: 'NEUTRAL',
+                score: 50,
+                hedgeRatio: 0.5,
+                trendStrength: 0
+            }
         };
     } catch (error) {
         console.error('Error fetching dashboard data:', error);
@@ -278,6 +284,12 @@ const generateFallbackData = (): DashboardData => {
             lastUpdate: 'Never',
             nextRebalance: 'N/A'
         },
-        chartData: []
+        chartData: [],
+        stance: {
+            stance: 'NEUTRAL',
+            score: 0,
+            hedgeRatio: 0,
+            trendStrength: 0
+        }
     };
 };
