@@ -1,8 +1,9 @@
+```json
 {
     "$schema": "https://railway.app/railway.schema.json",
     "build": {
         "builder": "NIXPACKS",
-        "buildCommand": "pip install --no-cache-dir -r requirements.txt"
+        "buildCommand": "pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt"
     },
     "deploy": {
         "startCommand": "python scripts/keepers/bot.py",
@@ -15,3 +16,4 @@
         "us-west1"
     ]
 }
+```

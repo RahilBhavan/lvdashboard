@@ -8,24 +8,25 @@ requests==2.31.0
 # ============================================
 # Data Processing & ML
 # ============================================
-pandas==2.2.0
-numpy==1.26.4
-arch==6.3.0
+# Using version ranges for better compatibility
+numpy>=1.24.0,<2.0.0
+pandas>=2.0.0,<3.0.0
+arch>=6.0.0,<7.0.0
 
 # ============================================
 # Database
 # ============================================
-supabase==2.3.4
+supabase>=2.0.0,<3.0.0
 
 # ============================================
-# Development & Testing
+# Development & Testing (Optional for production)
 # ============================================
-pytest==8.0.0
-flake8==7.1.1
-black==24.2.0
+# Uncomment if needed for Railway deployment
+# pytest>=8.0.0
+# flake8>=7.0.0
+# black>=24.0.0
 
 # ============================================
 # Production Monitoring (Optional)
 # ============================================
-# sentry-sdk==1.40.0
-
+# sentry-sdk>=1.40.0
